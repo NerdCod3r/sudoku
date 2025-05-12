@@ -1,6 +1,11 @@
 class SudokuSolver {
 
   validate(puzzleString) {
+    const puzzleLength = puzzleString.length;
+    if (puzzleLength != 81){
+      return false;
+    }
+    return true;
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
