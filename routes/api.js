@@ -3,9 +3,7 @@
 const SudokuSolver = require('../controllers/sudoku-solver.js');
 const sudokuObject = new SudokuSolver();
 
-module.exports = function (app) {
-  
-  let solver = new SudokuSolver();
+module.exports =  function (app) {
 
   app.route('/api/check')
     .post((req, res) => {
@@ -54,7 +52,7 @@ module.exports = function (app) {
         });
       } else {
         const solveString = req.body.puzzle;
-        const regEx = /^[1-9\.]{81}/;
+        const regEx = /^[123456789\.]{81}/;
         if (solveString.match(regEx)){
           const inputLength = sudokuObject.validate(solveString);
           if (!inputLength) {
@@ -62,7 +60,13 @@ module.exports = function (app) {
               "error": "Expected puzzle to be 81 characters long"
             });
           } else {
-              sudokuObject.solve(solveString);
+              // Replace . with 0
+              let sudokuBoard = sudokuObject.createBoard(solveString);
+              const sudokuSolution = sudokuObject.solve(sudokuBoard);
+              console.log("Solved");
+              res.json({
+                "solution": sudokuSolution
+              });
           }
         } else {
           res.json({
