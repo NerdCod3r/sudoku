@@ -17,7 +17,7 @@ module.exports =  function (app) {
 
         const coordinateRegExp = /^[A-I][123456789]$/;
         const valueRegExp = /^[123456789]$/;
-        const puzzleRegExp = /^[123456789.]{81}$/;
+        const puzzleRegExp = /^[123456789.]*$/;
 
         if ( !value.match(valueRegExp) ) {
           res.json({
@@ -31,7 +31,7 @@ module.exports =  function (app) {
           res.json({
             "error": "Invalid characters in puzzle"
           });
-        } else if (puzzleString.length != 81){
+        } else if (!sudokuObject.validate(puzzleString)){
           res.json({
             "error":"Expected puzzle to be 81 characters long"
           });
