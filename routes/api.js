@@ -9,12 +9,15 @@ module.exports =  function (app) {
     .post((req, res) => {
       if (req.body.puzzle && req.body.coordinate && req.body.value) {
         const puzzleString = req.body.puzzle;
+        console.log(puzzleString);
         const value = req.body.value;
+        //  console.log(value)
         const coordinate = req.body.coordinate;
+        //  console.log(coordinate);
 
-        const coordinateRegExp = /^[A-I]\d$/;
-        const valueRegExp = /^[1-9]$/;
-        const puzzleRegExp = /^[1-9\.]{81}$/;
+        const coordinateRegExp = /^[A-I][123456789]$/;
+        const valueRegExp = /^[123456789]$/;
+        const puzzleRegExp = /^[123456789\.]{81}$/;
 
         if ( !value.match(valueRegExp) ) {
           res.json({
@@ -24,17 +27,79 @@ module.exports =  function (app) {
           res.json({
             "error":"Invalid coordinate"
           });
-        } else if (!puzzle.match(puzzleRegExp)) {
+        } else if (!puzzleString.match(puzzleRegExp)) {
           res.json({
             "error": "Invalid characters in puzzle"
           });
-        } else if (puzzle.length != 81){
+        } else if (puzzleString.length != 81){
           res.json({
             "error":"Expected puzzle to be 81 characters long"
           });
-        }
+        } else if ( (puzzleString.length === 81) && (puzzleString.match(puzzleRegExp)) && (coordinate.match(coordinateRegExp)) && (value.match(valueRegExp))){
+          // Continue with what is required in this endpoint.
+        const ROW = coordinate[0];
+        let rowIndex = -1;
 
-        // Continue with what is required in this endpoint.
+        switch(ROW){
+          case 'A':
+            rowIndex = 0;
+            break;
+          case 'B':
+            rowIndex = 1;
+            break;
+          case 'C':
+            rowIndex = 2;
+            break;
+          case 'D':
+            rowIndex = 3;
+            break;
+          case 'E':
+            rowIndex = 4;
+            break;
+          case 'F':
+              rowIndex = 5;
+              break;
+          case 'G':
+              rowIndex = 6;
+              break;
+          case 'H':
+              rowIndex = 7;
+              break;
+          case 'I':
+              rowIndex = 8;
+              break;
+        }
+        let colIndex = parseInt(coordinate[1]) - 1;
+        const rowClash = sudokuObject.checkRowPlacement(puzzleString, rowIndex, colIndex, value);
+        //console.log("row:", rowClash);
+        const colClash = sudokuObject.checkColPlacement(puzzleString, rowIndex, colIndex, value);
+        //console.log("col:", colClash);
+        const subGridsClash = sudokuObject.checkRegionPlacement(puzzleString, rowIndex, colIndex, value);
+        //console.log("box:", subGridsClash);
+        let clashes = []
+
+        if (rowClash){
+          clashes.push("row");
+        } 
+        if (colClash){
+          clashes.push("column");
+        }
+        if (subGridsClash){
+          clashes.push("region");
+        }
+        
+        if (clashes.length === 0){
+          res.json({
+            "valid": true
+          });
+        } else {
+          res.json({
+            "valid": false,
+            "conflict": clashes
+          });
+        }
+        // end of checks
+      }
 
       } else {
         res.json({

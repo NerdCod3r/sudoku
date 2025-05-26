@@ -81,14 +81,77 @@ class SudokuSolver {
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
+    let Board = this.createBoard(puzzleString);
+    let clash = false;
+    //  Loop through the columns to find clashes
+    for (let col =0; col < 9; col++){
+      if (col !== column){
+        if(Board[row][col] === parseInt(value)){
+          clash = true;
+          break;
+        }
+      }
+    }
+    return clash;
 
   }
 
   checkColPlacement(puzzleString, row, column, value) {
-
+    let Board = this.createBoard(puzzleString);
+    let clash = false;
+    //  Loop through the rows to find clashes
+    for (let rows =0; rows < 9; rows++){
+      if (rows !== row){
+        if(Board[rows][column] === parseInt(value)){
+          clash = true;
+          break;
+        }
+      }
+    }
+    return clash;
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
+    let Board = this.createBoard(puzzleString);
+    let clash = false;
+    let subgrids = Array.from({ length: 9 }, () => []);
+
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      const subgridIndex = Math.floor(row / 3) * 3 + Math.floor(col / 3);
+      subgrids[subgridIndex].push(Board[row][col]);
+    }
+  }
+  let boxNumber = -1;
+
+  // Find the box/ index to check in.
+  if (row < 3 && column < 3){
+    boxNumber = 0;
+  } else if ( row < 3 && (column >= 3 && column < 6)){
+    boxNumber = 1;
+  } else if (row < 3 && (column >=6 && column < 9)){
+    boxNumber = 2;
+  } else if ((row >=3 && row < 6) && column < 3){
+    boxNumber = 3;
+  } else if ((row >=3 && row < 6) && (column >= 3 && column < 6)){
+    boxNumber = 4;
+  } else if ((row >= 3 && row < 6) && (column >= 6 && column < 9)){
+    boxNumber = 5;
+  } else if ((row >=6 && row < 9) && column < 3) {
+    boxNumber = 6;
+  } else if ((row >= 6 && row < 9) && (column >= 3 && column < 6)){
+    boxNumber = 7;
+  } else if ((row >= 6 && row < 9) && (column >=6 && column < 9)){
+    boxNumber = 8;
+  }
+
+  // Do the findings
+  for (let i = 0; i < subgrids[boxNumber].length; i++){
+    if(subgrids[boxNumber][i] === parseInt(value)){
+      clash = true;
+    }
+  }
+  return clash;
 
   }
   /**
@@ -124,7 +187,7 @@ class SudokuSolver {
         }
       }
     }
-    return this.stringify(board);
+    return board;
   }
   /**
    * Converts the board to a string
@@ -142,7 +205,7 @@ class SudokuSolver {
     return boardString;
   }
 
-  solve(board) {
+  solve(board, solve=true) {
    for (let row = 0; row < board.length; row++ ) {
     for (let col = 0; col < board[row].length; col++)
     {
@@ -161,7 +224,10 @@ class SudokuSolver {
    // Call the method that will put the final missing
    // values in the board array.
    board = this.finalSolve(board);
-   return board;
+   if(!solve){
+    return board;
+   }
+   return this.stringify(board);
   }
 }
 
