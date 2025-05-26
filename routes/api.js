@@ -17,7 +17,7 @@ module.exports =  function (app) {
 
         const coordinateRegExp = /^[A-I][123456789]$/;
         const valueRegExp = /^[123456789]$/;
-        const puzzleRegExp = /^[123456789\.]{81}$/;
+        const puzzleRegExp = /^[123456789.]{81}$/;
 
         if ( !value.match(valueRegExp) ) {
           res.json({
@@ -87,7 +87,7 @@ module.exports =  function (app) {
         if (subGridsClash){
           clashes.push("region");
         }
-        
+
         if (clashes.length === 0){
           res.json({
             "valid": true
@@ -117,7 +117,7 @@ module.exports =  function (app) {
         });
       } else {
         const solveString = req.body.puzzle;
-        const regEx = /^[123456789\.]{81}/;
+        const regEx = /^[123456789.]*$/;
         if (solveString.match(regEx)){
           const inputLength = sudokuObject.validate(solveString);
           if (!inputLength) {

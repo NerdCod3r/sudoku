@@ -73,8 +73,9 @@ class SudokuSolver {
   }
 
   validate(puzzleString) {
+    console.log('Validating...');
     const puzzleLength = puzzleString.length;
-    if (puzzleLength != 81){
+    if (puzzleLength !== 81){
       return false;
     }
     return true;
