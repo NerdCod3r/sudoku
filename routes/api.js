@@ -70,7 +70,15 @@ module.exports =  function (app) {
               break;
         }
         let colIndex = parseInt(coordinate[1]) - 1;
-        const rowClash = sudokuObject.checkRowPlacement(puzzleString, rowIndex, colIndex, value);
+
+        // Check if the value is already in the board
+        const placedBoard = sudokuObject.createBoard(puzzleString);
+        if (placedBoard[rowIndex][colIndex] === parseInt(value)){
+          res.json({
+            "valid": true
+          });
+        } else {
+          const rowClash = sudokuObject.checkRowPlacement(puzzleString, rowIndex, colIndex, value);
         //console.log("row:", rowClash);
         const colClash = sudokuObject.checkColPlacement(puzzleString, rowIndex, colIndex, value);
         //console.log("col:", colClash);
@@ -98,7 +106,8 @@ module.exports =  function (app) {
             "conflict": clashes
           });
         }
-        // end of checks
+      }
+      // end of checks
       }
 
       } else {
