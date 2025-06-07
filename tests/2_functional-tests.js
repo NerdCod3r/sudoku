@@ -66,7 +66,7 @@ test("Solve a puzzle that CANNOT BE SOLVED", function(done){
     .send({"puzzle":unsolveablePuzzleString })
     .end(function(err, res){
         assert.equal(res.status, 200);
-        assert.equal(res.body.solution, '');
+        assert.equal(res.body.error, 'Puzzle cannot be solved');
         done();
     });
 });
