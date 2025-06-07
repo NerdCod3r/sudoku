@@ -1,5 +1,4 @@
 class SudokuSolver {
-
   /*
   * isSafe function used to check if placement in a certain box
   * is safe or not.  
@@ -29,6 +28,7 @@ class SudokuSolver {
   return true;
   }
 
+  
   /**
    * createBoard method takes a string and returns an array of the sudoku
    * puzzle spread out.
@@ -67,18 +67,11 @@ class SudokuSolver {
 
   checkRowPlacement(puzzleString, row, column, value) {
     let Board = this.createBoard(puzzleString);
-    let clash = false;
-    //  Loop through the columns to find clashes
-    for (let col =0; col < 9; col++){
-      if (col !== column){
-        if(Board[row][col] === parseInt(value)){
-          clash = true;
-          break;
-        }
-      }
+    
+    if ( Board[row].indexOf(parseInt(value)) === -1 ){
+      return false;
     }
-    return clash;
-
+    return true;
   }
 
   checkColPlacement(puzzleString, row, column, value) {
@@ -86,12 +79,11 @@ class SudokuSolver {
     let clash = false;
     //  Loop through the rows to find clashes
     for (let rows =0; rows < 9; rows++){
-      if (rows !== row){
         if(Board[rows][column] === parseInt(value)){
           clash = true;
           break;
         }
-      }
+
     }
     return clash;
   }
@@ -139,81 +131,54 @@ class SudokuSolver {
   return clash;
 
   }
-  /**
-   * finalSolve method is used to solve for the missing spaces on the board.
-   * basically
-   * @param {*} board 
-   * @returns {string} boardString
-   */
-  finalSolve(board){
-    const TOTAL = 45;
-    const boardRowTotals = [];
+solvePuzzle(Board, row, col){
+  const N = 9;
 
-    for (let row = 0; row < board.length; row++){
-      let total = 0;
-      for (let col = 0; col < board[row].length; col++)
-      {
-        if (board[row][col] !== '.'){
-          total += board[row][col];
-        }
-      }
-      boardRowTotals.push(total);
-    }
-    
-    // Edit the board and insert the missing values
-    for (let row = 0; row < board.length; row++){
-      const currTotal = boardRowTotals[row];
-      const difference = TOTAL - currTotal;
-
-      for (let cols = 0; cols< board[row].length; cols++){
-        if (board[row][cols] === '.') {
-          board[row][cols] = difference;
-          continue;
-        }
-      }
-    }
-    return board;
+  if ( row === N - 1 && col === N ){
+    return Board;
   }
-  /**
-   * Converts the board to a string
-   * @param {*} board 
-   * @returns boardString
-   */
-  stringify(board){
-    let boardString = ""
-
-    for (let rows= 0; rows < board.length; rows++){
-      for(let cols = 0; cols< board[rows].length; cols++){
-        boardString += board[rows][cols].toString();
-      }
-    }
-    return boardString;
+  if ( col === N ) {
+    row++;
+    col = 0;
   }
 
-  solve(board, solve=true) {
-   for (let row = 0; row < board.length; row++ ) {
-    for (let col = 0; col < board[row].length; col++)
-    {
-      if (board[row][col] === '.'){
-        for (let num = 1; num <= 9; num++){
-          const safe = this.isSafe(board, row, col, num);
-          if (safe){
-            board[row][col] = parseInt(num);
-            break;
-          }
-        }
+  if ( Board[row][col] != '.' ){
+    return this.solvePuzzle(Board, row, col + 1);
+  }
+
+  for ( let num = 1; num < 10; num++ ){
+    if( this.isSafe(Board, row, col, num) ){
+      Board[row][col] = num;
+
+      if (this.solvePuzzle(Board, row, col + 1)){
+        return Board;
       }
     }
-   }
-   
-   // Call the method that will put the final missing
-   // values in the board array.
-   board = this.finalSolve(board);
-   if(!solve){
-    return board;
-   }
-   return this.stringify(board);
+    Board[row][col] = '.';
   }
+  return false;
+}
+solve(board){
+ let solvedBoard = this.solvePuzzle(board, 0, 0);
+ let solved = true;
+ // Check that it is solved.
+ if ( solvedBoard === false){
+  return "";
+ } else {
+    for ( let rows = 0; rows < 9; rows++ ){
+      if ( solvedBoard[rows].indexOf(".") !== -1 ){
+        solved = false;
+      }
+    }
+    let stringSolution = "";
+    // Stringify the board
+    if ( solved ){
+        stringSolution = solvedBoard.flat().join("");
+    }
+    return stringSolution;
+    }
+ }
+ 
 }
 
 module.exports = SudokuSolver;

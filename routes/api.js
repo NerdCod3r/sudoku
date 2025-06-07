@@ -137,10 +137,16 @@ module.exports =  function (app) {
               // Replace . with 0
               let sudokuBoard = sudokuObject.createBoard(solveString);
               const sudokuSolution = sudokuObject.solve(sudokuBoard);
-              console.log("Solved");
-              res.json({
-                "solution": sudokuSolution
-              });
+              if ( sudokuSolution.indexOf(".") === -1 ){
+                res.json({
+                  "solution": sudokuSolution
+                });
+              } else {
+                res.json({
+                  "error": "Puzzle cannot be solved"
+                });
+              }
+              
           }
         } else {
           res.json({
