@@ -137,7 +137,7 @@ module.exports =  function (app) {
               // Replace . with 0
               let sudokuBoard = sudokuObject.createBoard(solveString);
               const sudokuSolution = sudokuObject.solve(sudokuBoard);
-              if ( sudokuSolution.indexOf(".") === -1 ){
+              if ( sudokuSolution !== "" ){
                 res.json({
                   "solution": sudokuSolution
                 });
