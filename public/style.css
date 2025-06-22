@@ -1,6 +1,10 @@
 code {
   background: #d0d0d5;
 }
+body{
+  background-image: url('./puzzles-sudoku-leisure-rates.jpg');
+  background-repeat:repeat;
+}
 
 .container {
   display: flex;
@@ -30,11 +34,13 @@ textarea {
   display: flex;
   flex-direction: row;
   margin-left: 20px;
+  background-color: #FFFFFF;
 }
 
 #sudoku-grid {
   text-align: center;
   display: inline;
+  
 }
 
 .grid {
@@ -101,4 +107,7 @@ td {
   .form-container {
     align-self: center;
   }
+}
+form#check-form{
+  color: #ffffff;
 }
